@@ -28,20 +28,41 @@ export async function updateSession(request: NextRequest) {
   )
 
   // IMPORTANT: Avoid calling getUser() on endpoints that are static or assets
-  const isAsset = request.nextUrl.pathname.startsWith('/_next') ||
-                  request.nextUrl.pathname.startsWith('/static') ||
-                  request.nextUrl.pathname.includes('.')
+  const path = request.nextUrl.pathname
+  const isAsset = path.startsWith('/_next') ||
+                  path.startsWith('/static') ||
+                  path.includes('.')
 
   if (isAsset) {
     return supabaseResponse
   }
 
-  // Refresh session if expired
+  // Parse Subdomain
+  const host = request.headers.get('host') || ''
+  const parts = host.split('.')
+  let subdomain: string | null = null
+
+  if (parts.length > 1) {
+    const lastPart = parts[parts.length - 1]
+    if (lastPart.startsWith('localhost:3000') && parts.length === 2) {
+      const possible = parts[0].toLowerCase()
+      if (possible !== 'www') subdomain = possible
+    } else if (parts.length > 2) {
+      const possible = parts[0].toLowerCase()
+      if (possible !== 'www' && possible !== 'api') subdomain = possible
+    }
+  }
+
+  // If subdomain is active, rewrite path internally to /subdomains/[subdomain]/...
+  if (subdomain) {
+    const rewriteUrl = new URL(`/subdomains/${subdomain}${path}`, request.url)
+    return NextResponse.rewrite(rewriteUrl)
+  }
+
+  // Refresh session if expired (only for main domain)
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
-  const path = request.nextUrl.pathname
 
   // Protect dashboard routes
   if (path.startsWith('/dashboard')) {
@@ -57,3 +78,4 @@ export async function updateSession(request: NextRequest) {
 
   return supabaseResponse
 }
+
