@@ -48,12 +48,24 @@ export default function Sidebar({ userEmail, fullName, userRole }: SidebarProps)
       roles: ['Admin', 'Manager'],
     },
     {
+      name: 'Billing',
+      icon: 'credit_card',
+      href: '/dashboard/billing',
+      roles: ['Member'],
+    },
+    {
+      name: 'Signed Waivers',
+      icon: 'gavel',
+      href: '/dashboard/waivers',
+      roles: ['Member'],
+    },
+    {
       name: 'Settings',
       icon: 'settings',
       href: '/dashboard/settings',
-      disabled: true,
     },
   ]
+
 
   // Filter items based on user's role
   const visibleItems = navItems.filter((item) => {
