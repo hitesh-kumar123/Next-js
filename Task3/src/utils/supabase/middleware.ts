@@ -27,7 +27,6 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // IMPORTANT: Avoid calling getUser() on endpoints that are static or assets
   const path = request.nextUrl.pathname
   const isAsset = path.startsWith('/_next') ||
                   path.startsWith('/static') ||
@@ -53,8 +52,21 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  // If subdomain is active, rewrite path internally to /subdomains/[subdomain]/...
+  // If subdomain is active, verify owner status
   if (subdomain) {
+    // Check if the owner of this subdomain is suspended
+    const { data: gymOwner } = await supabase
+      .from('users')
+      .select('is_suspended')
+      .eq('subdomain', subdomain.toLowerCase())
+      .maybeSingle()
+
+    if (gymOwner && gymOwner.is_suspended) {
+      // Rewrite to public suspension message
+      const suspendedUrl = new URL('/suspended', request.url)
+      return NextResponse.rewrite(suspendedUrl)
+    }
+
     const rewriteUrl = new URL(`/subdomains/${subdomain}${path}`, request.url)
     return NextResponse.rewrite(rewriteUrl)
   }
@@ -63,6 +75,23 @@ export async function updateSession(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
+  if (user) {
+    // Check if user account is suspended
+    const { data: profile } = await supabase
+      .from('users')
+      .select('is_suspended')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (profile && profile.is_suspended) {
+      // Clear cookies and force redirect to login with error parameter
+      const response = NextResponse.redirect(new URL('/login?error=account_suspended', request.url))
+      response.cookies.delete('sb-access-token')
+      response.cookies.delete('sb-refresh-token')
+      return response
+    }
+  }
 
   // Protect dashboard routes
   if (path.startsWith('/dashboard')) {
@@ -78,4 +107,3 @@ export async function updateSession(request: NextRequest) {
 
   return supabaseResponse
 }
-

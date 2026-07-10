@@ -9,9 +9,15 @@ interface SidebarProps {
   userEmail: string
   fullName: string
   userRole: 'Admin' | 'Manager' | 'Trainer' | 'Member'
+  isSuperAdmin?: boolean
 }
 
-export default function Sidebar({ userEmail, fullName, userRole }: SidebarProps) {
+export default function Sidebar({
+  userEmail,
+  fullName,
+  userRole,
+  isSuperAdmin = false,
+}: SidebarProps) {
   const router = useRouter()
   const pathname = usePathname()
   const supabase = createClient()
@@ -22,7 +28,13 @@ export default function Sidebar({ userEmail, fullName, userRole }: SidebarProps)
     router.push('/login')
   }
 
-  const navItems = [
+  const navItems: {
+    name: string
+    icon: string
+    href: string
+    disabled?: boolean
+    roles?: string[]
+  }[] = [
     {
       name: 'Dashboard',
       icon: 'dashboard',
@@ -37,7 +49,6 @@ export default function Sidebar({ userEmail, fullName, userRole }: SidebarProps)
       name: 'Financials',
       icon: 'payments',
       href: '/dashboard/financials',
-      disabled: true,
       roles: ['Admin', 'Manager'],
     },
     {
@@ -76,6 +87,14 @@ export default function Sidebar({ userEmail, fullName, userRole }: SidebarProps)
       href: '/dashboard/settings',
     },
   ]
+
+  if (isSuperAdmin) {
+    navItems.push({
+      name: 'Platform Console',
+      icon: 'admin_panel_settings',
+      href: '/dashboard/superadmin',
+    })
+  }
 
 
   // Filter items based on user's role
