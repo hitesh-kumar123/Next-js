@@ -42,8 +42,14 @@ export default function Sidebar({ userEmail, fullName, userRole }: SidebarProps)
       roles: ['Admin', 'Manager'],
     },
     {
-      name: 'Staff & Users',
+      name: 'Members',
       icon: 'groups',
+      href: '/dashboard/members',
+      roles: ['Admin', 'Manager'],
+    },
+    {
+      name: 'Staff Management',
+      icon: 'badge',
       href: '/dashboard/settings/users',
       roles: ['Admin', 'Manager'],
     },
