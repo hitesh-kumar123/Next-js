@@ -32,7 +32,6 @@ export default function Sidebar({ userEmail, fullName, userRole }: SidebarProps)
       name: 'Class Schedule',
       icon: 'calendar_today',
       href: '/dashboard/schedule',
-      disabled: true,
     },
     {
       name: 'Financials',
