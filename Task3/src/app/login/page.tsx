@@ -33,7 +33,12 @@ export default function LoginPage() {
         router.push('/dashboard')
       }
     } catch (err: any) {
-      setErrorMsg('An unexpected error occurred. Please try again.')
+      const errMsg = err?.message || String(err)
+      if (errMsg.toLowerCase().includes('fetch') || errMsg.toLowerCase().includes('failed to fetch')) {
+        setErrorMsg('Failed to connect to Supabase. Please check that NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are correctly set in the .env file.')
+      } else {
+        setErrorMsg(errMsg || 'An unexpected error occurred. Please try again.')
+      }
     } finally {
       setLoading(false)
     }

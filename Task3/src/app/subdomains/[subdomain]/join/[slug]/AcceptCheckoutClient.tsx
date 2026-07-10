@@ -146,7 +146,12 @@ export default function AcceptCheckoutClient({
         }
       }
     } catch (err: any) {
-      setErrorMsg(err.message || 'An unexpected error occurred during checkout.')
+      const errMsg = err?.message || String(err)
+      if (errMsg.toLowerCase().includes('fetch') || errMsg.toLowerCase().includes('failed to fetch')) {
+        setErrorMsg('Failed to connect to Supabase. Please check that NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are correctly set in the .env file.')
+      } else {
+        setErrorMsg(errMsg || 'An unexpected error occurred during checkout.')
+      }
       setLoading(false)
     }
   }
