@@ -48,6 +48,12 @@ export default function Sidebar({ userEmail, fullName, userRole }: SidebarProps)
       roles: ['Admin', 'Manager'],
     },
     {
+      name: 'Check-In Terminal',
+      icon: 'barcode_reader',
+      href: '/dashboard/checkin',
+      roles: ['Admin', 'Manager'],
+    },
+    {
       name: 'Staff Management',
       icon: 'badge',
       href: '/dashboard/settings/users',
