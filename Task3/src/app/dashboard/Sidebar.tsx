@@ -8,9 +8,10 @@ import { createClient } from '@/utils/supabase/client'
 interface SidebarProps {
   userEmail: string
   fullName: string
+  userRole: 'Admin' | 'Manager' | 'Trainer' | 'Member'
 }
 
-export default function Sidebar({ userEmail, fullName }: SidebarProps) {
+export default function Sidebar({ userEmail, fullName, userRole }: SidebarProps) {
   const router = useRouter()
   const pathname = usePathname()
   const supabase = createClient()
@@ -38,6 +39,13 @@ export default function Sidebar({ userEmail, fullName }: SidebarProps) {
       icon: 'payments',
       href: '/dashboard/financials',
       disabled: true,
+      roles: ['Admin', 'Manager'],
+    },
+    {
+      name: 'Staff & Users',
+      icon: 'groups',
+      href: '/dashboard/settings/users',
+      roles: ['Admin', 'Manager'],
     },
     {
       name: 'Settings',
@@ -46,6 +54,14 @@ export default function Sidebar({ userEmail, fullName }: SidebarProps) {
       disabled: true,
     },
   ]
+
+  // Filter items based on user's role
+  const visibleItems = navItems.filter((item) => {
+    if (item.roles && !item.roles.includes(userRole)) {
+      return false
+    }
+    return true
+  })
 
   return (
     <aside className="h-screen w-64 fixed left-0 top-0 bg-[#131c2a] text-[#fff8f2] p-6 flex flex-col z-50">
@@ -61,7 +77,7 @@ export default function Sidebar({ userEmail, fullName }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 space-y-2">
-        {navItems.map((item) => {
+        {visibleItems.map((item) => {
           const isActive = pathname === item.href
           if (item.disabled) {
             return (
@@ -102,7 +118,14 @@ export default function Sidebar({ userEmail, fullName }: SidebarProps) {
           <span className="text-sm font-semibold text-[#fff8f2] truncate">
             {fullName || 'User'}
           </span>
-          <span className="text-xs text-[#bec7da] truncate">{userEmail}</span>
+          <div className="flex items-center justify-between gap-1.5 mt-0.5">
+            <span className="text-[10px] text-[#bec7da] truncate max-w-[100px]">
+              {userEmail}
+            </span>
+            <span className="text-[9px] font-bold bg-[#f5a623]/25 text-[#f5a623] border border-[#f5a623]/40 px-1.5 py-0.5 rounded uppercase leading-none scale-90 shrink-0">
+              {userRole}
+            </span>
+          </div>
         </div>
         <button
           onClick={handleLogout}

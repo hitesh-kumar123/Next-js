@@ -30,16 +30,18 @@ export default async function DashboardLayout({
 
   const fullName = profile?.full_name || 'Auric Member'
   const userEmail = user.email || ''
+  const userRole = profile?.role || 'Member'
 
   return (
     <div className="min-h-screen bg-[#fff8f2] text-[#201b13] flex">
       {/* Sidebar Navigation */}
-      <Sidebar userEmail={userEmail} fullName={fullName} />
+      <Sidebar userEmail={userEmail} fullName={fullName} userRole={userRole} />
 
       {/* Main Content Area */}
       <div className="ml-64 flex-1 flex flex-col min-h-screen">
         {children}
       </div>
     </div>
-  )
+  );
 }
+
