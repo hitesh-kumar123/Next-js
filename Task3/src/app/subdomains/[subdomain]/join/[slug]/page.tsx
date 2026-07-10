@@ -34,10 +34,10 @@ export default async function PublicJoinPage({ params }: PageProps) {
       <main className="min-h-screen w-full bg-background flex flex-col justify-center items-center p-4">
         <div className="glass-card p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
           <span className="material-symbols-outlined text-error text-5xl mb-4">error</span>
-          <h2 className="font-display text-xl font-bold text-[#201b13] mb-2">
+          <h2 className="font-display text-xl font-bold text-on-surface mb-2">
             Gym Not Found
           </h2>
-          <p className="text-sm text-[#524534]">
+          <p className="text-sm text-on-surface-variant">
             The subdomain <code>{subdomain}</code> does not correspond to an active gym on Auric.
           </p>
         </div>
@@ -62,10 +62,10 @@ export default async function PublicJoinPage({ params }: PageProps) {
       <main className="min-h-screen w-full bg-background flex flex-col justify-center items-center p-4">
         <div className="glass-card p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
           <span className="material-symbols-outlined text-[#F5A623] text-5xl mb-4">pause_circle</span>
-          <h2 className="font-display text-xl font-bold text-[#201b13] mb-2">
+          <h2 className="font-display text-xl font-bold text-on-surface mb-2">
             Form Registration Paused
           </h2>
-          <p className="text-sm text-[#524534]">
+          <p className="text-sm text-on-surface-variant">
             This signup page has been temporarily deactivated by the gym administrator.
           </p>
         </div>
@@ -96,10 +96,10 @@ export default async function PublicJoinPage({ params }: PageProps) {
       <main className="min-h-screen w-full bg-background flex flex-col justify-center items-center p-4">
         <div className="glass-card p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
           <span className="material-symbols-outlined text-[#F5A623] text-5xl mb-4">production_quantity_limits</span>
-          <h2 className="font-display text-xl font-bold text-[#201b13] mb-2">
+          <h2 className="font-display text-xl font-bold text-on-surface mb-2">
             No Products Configured
           </h2>
-          <p className="text-sm text-[#524534]">
+          <p className="text-sm text-on-surface-variant">
             This form does not have any active products available for purchase.
           </p>
         </div>
