@@ -8,7 +8,7 @@
   --color-primary-container: #f5a623;
   --color-tertiary: #ae3115;
   --color-tertiary-container: #ff9c85;
-  
+
   --color-background: #fff8f2;
   --color-surface: #fff8f2;
   --color-surface-dim: #e3d9cb;
@@ -19,24 +19,24 @@
   --color-surface-container-high: #f1e7d9;
   --color-surface-container-highest: #ebe1d3;
   --color-surface-variant: #ebe1d3;
-  
+
   --color-on-primary: #ffffff;
   --color-on-primary-container: #644000;
   --color-on-secondary: #ffffff;
   --color-on-secondary-fixed: #131c2a;
   --color-on-secondary-fixed-variant: #3e4757;
-  
+
   --color-secondary: #565f6f;
   --color-secondary-container: #d7e0f3;
   --color-secondary-fixed: #dae3f6;
   --color-secondary-fixed-dim: #bec7da;
-  
+
   --color-on-surface: #201b13;
   --color-on-surface-variant: #524534;
-  
+
   --color-outline: #857462;
   --color-outline-variant: #d7c3ae;
-  
+
   --color-error: #ba1a1a;
   --color-error-container: #ffdad6;
   --color-on-error: #ffffff;
@@ -48,6 +48,10 @@
   --foreground: #201b13;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -56,7 +60,11 @@ body {
 
 /* Custom UI Utilities */
 .material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
   display: inline-block;
   vertical-align: middle;
 }
@@ -72,7 +80,12 @@ body {
   width: 450px;
   height: 450px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(245, 166, 35, 0.12) 0%, rgba(255, 140, 90, 0.05) 50%, rgba(245, 166, 35, 0) 70%);
+  background: radial-gradient(
+    circle,
+    rgba(245, 166, 35, 0.12) 0%,
+    rgba(255, 140, 90, 0.05) 50%,
+    rgba(245, 166, 35, 0) 70%
+  );
   filter: blur(60px);
   z-index: -1;
   pointer-events: none;
@@ -86,3 +99,34 @@ body {
   box-shadow: 0 0 25px rgba(255, 140, 90, 0.25);
 }
 
+/* Custom Fade-In and Hover Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animation-delay-400 {
+  animation-delay: 400ms;
+}

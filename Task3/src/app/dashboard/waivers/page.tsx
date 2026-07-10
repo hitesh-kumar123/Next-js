@@ -24,8 +24,32 @@ export default async function MemberWaiversPage() {
     .eq('id', user.id)
     .single()
 
+  if (!profile) {
+    return (
+      <main className="flex-1 p-10 flex justify-center items-center relative overflow-hidden bg-background">
+        <div className="orb-glow top-[-100px] right-[-100px]" />
+        <div className="orb-glow bottom-[-100px] left-[20%]" />
+        <div className="bg-[#121824] border border-[#f5a623]/25 p-8 rounded-2xl shadow-xl max-w-md w-full text-center relative z-10">
+          <span className="material-symbols-outlined text-red-500 text-5xl mb-4">database_alert</span>
+          <h2 className="font-display text-xl font-bold text-white mb-2">
+            Profile Sync Issue
+          </h2>
+          <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+            Could not fetch user profile. This is likely caused by incorrect or invalid Supabase API keys in your <code>.env</code> file.
+          </p>
+          <div className="bg-[#090d16] p-3.5 rounded-xl border border-slate-800 text-[11px] text-slate-400 text-left font-mono">
+            <span className="block font-bold text-red-400 mb-1">Diagnosis:</span>
+            - Supabase query returned null/error<br/>
+            - Token starts with: {process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 8) || 'None'}<br/>
+            - User ID: {user.id.slice(0, 8)}...
+          </div>
+        </div>
+      </main>
+    )
+  }
+
   // Only Members can access this signed waivers portal
-  if (profile?.role !== 'Member') {
+  if (profile.role !== 'Member') {
     redirect('/dashboard')
   }
 
