@@ -15,22 +15,32 @@ interface ClassRecord {
   capacity: number
   bookings_count: number
 }
+interface TrainerRecord {
+  id: string
+  full_name: string | null
+  email: string
+}
 
 interface ScheduleClientProps {
   initialClasses: ClassRecord[]
   initialBookedIds: string[]
   userRole: 'Admin' | 'Manager' | 'Trainer' | 'Member'
+  currentUserFullName: string
+  trainers: TrainerRecord[]
 }
 
 export default function ScheduleClient({
   initialClasses,
   initialBookedIds,
   userRole,
+  currentUserFullName,
+  trainers,
 }: ScheduleClientProps) {
   const [search, setSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [selectedDateStr, setSelectedDateStr] = useState<string | null>(null) // Format: YYYY-MM-DD
   const [bookedIds, setBookedIds] = useState<string[]>(initialBookedIds)
+  const [filterMyClasses, setFilterMyClasses] = useState(false) // Trainer filter
 
   // Add Class Modal State
   const [showAddModal, setShowAddModal] = useState(false)
@@ -48,7 +58,7 @@ export default function ScheduleClient({
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
 
-  const isStaff = userRole === 'Admin' || userRole === 'Manager'
+  const isStaff = userRole === 'Admin' || userRole === 'Manager' || userRole === 'Trainer'
 
   // Generate date list (Today and next 6 days)
   const getDates = () => {
@@ -148,6 +158,9 @@ export default function ScheduleClient({
 
   // Filter logic
   const filteredClasses = initialClasses.filter((c) => {
+    // Trainer: My classes filter
+    if (userRole === 'Trainer' && filterMyClasses && c.instructor !== currentUserFullName) return false
+
     // Category pill filter
     if (selectedCategory !== 'All' && c.category !== selectedCategory) return false
 
@@ -229,16 +242,21 @@ export default function ScheduleClient({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-[#201b13] mb-1">
-                    Instructor
+                    Instructor (Staff)
                   </label>
-                  <input
-                    type="text"
+                  <select
                     required
-                    placeholder="Coach Adams"
                     value={newClassInstructor}
                     onChange={(e) => setNewClassInstructor(e.target.value)}
-                    className="w-full bg-[#fdf2e4]/40 border border-[#d7c3ae]/50 focus:border-[#F5A623] rounded-xl px-4 py-2 text-xs outline-none text-[#201b13]"
-                  />
+                    className="w-full bg-[#fdf2e4]/40 border border-[#d7c3ae]/50 focus:border-[#F5A623] rounded-xl px-4 py-2 text-xs outline-none text-[#201b13] bg-white"
+                  >
+                    <option value="">Select Trainer...</option>
+                    {trainers.map((t) => (
+                      <option className="bg-[#fff8f2] text-[#201b13]" key={t.id} value={t.full_name || ''}>
+                        {t.full_name || t.email}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
@@ -364,20 +382,36 @@ export default function ScheduleClient({
         </div>
 
         {/* Category Pills (Yoga, HIIT, Pilates, Strength) */}
-        <div className="flex flex-wrap gap-2 pt-2 border-t border-[#d7c3ae]/15">
-          {['All', 'Yoga', 'HIIT', 'Pilates', 'Strength'].map((cat) => (
+        <div className="flex flex-wrap gap-2 pt-2 border-t border-[#d7c3ae]/15 justify-between items-center w-full">
+          <div className="flex flex-wrap gap-2">
+            {['All', 'Yoga', 'HIIT', 'Pilates', 'Strength'].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  selectedCategory === cat
+                    ? 'bg-[#131c2a] text-[#fff8f2]'
+                    : 'bg-[#fdf2e4]/40 text-[#524534] border border-[#d7c3ae]/30 hover:bg-[#fdf2e4]'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {userRole === 'Trainer' && (
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                selectedCategory === cat
-                  ? 'bg-[#131c2a] text-[#fff8f2]'
-                  : 'bg-[#fdf2e4]/40 text-[#524534] border border-[#d7c3ae]/30 hover:bg-[#fdf2e4]'
+              onClick={() => setFilterMyClasses(!filterMyClasses)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
+                filterMyClasses
+                  ? 'bg-[#f5a623] text-[#644000] border-[#f5a623] shadow-xs'
+                  : 'bg-white/50 text-[#524534] border-[#d7c3ae]/30 hover:bg-[#fdf2e4]'
               }`}
             >
-              {cat}
+              <span className="material-symbols-outlined text-sm">filter_list</span>
+              Show My Classes Only
             </button>
-          ))}
+          )}
         </div>
       </div>
 

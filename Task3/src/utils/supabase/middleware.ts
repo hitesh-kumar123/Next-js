@@ -38,10 +38,11 @@ export async function updateSession(request: NextRequest) {
 
   // Parse Subdomain
   const host = request.headers.get('host') || ''
+  const isIpAddress = /^[0-9.]+$/.test(host.split(':')[0])
   const parts = host.split('.')
   let subdomain: string | null = null
 
-  if (parts.length > 1) {
+  if (!isIpAddress && parts.length > 1) {
     const lastPart = parts[parts.length - 1]
     if (lastPart.startsWith('localhost:3000') && parts.length === 2) {
       const possible = parts[0].toLowerCase()

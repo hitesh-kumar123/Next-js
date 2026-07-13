@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import CSVImportModal from './CSVImportModal'
 import { bulkDeleteMembers } from './actions'
+import { verifyAndCheckIn } from '../checkin/actions'
 
 interface UserRecord {
   id: string
@@ -34,6 +35,14 @@ export default function MembersClient({ initialUsers, currentUserRole }: Members
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
   const [showImportModal, setShowImportModal] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [checkingInUser, setCheckingInUser] = useState<UserRecord | null>(null)
+  const [checkInResult, setCheckInResult] = useState<{
+    success: boolean
+    memberName: string
+    activePlan?: string
+    reason?: string
+  } | null>(null)
+  const [checkInLoading, setCheckInLoading] = useState(false)
 
   const isAdmin = currentUserRole === 'Admin'
 
@@ -273,13 +282,25 @@ export default function MembersClient({ initialUsers, currentUserRole }: Members
                         )}
                       </td>
                       <td className="py-4 text-right">
-                        <Link
-                          href={`/dashboard/members/${user.id}`}
-                          className="text-[#835500] hover:text-primary font-bold transition-all text-xs flex items-center justify-end gap-0.5 hover:gap-1.5"
-                        >
-                          Details
-                          <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                        </Link>
+                        <div className="flex items-center justify-end gap-3">
+                          <button
+                            onClick={() => {
+                              setCheckingInUser(user)
+                              setCheckInResult(null)
+                            }}
+                            className="text-[10px] font-bold bg-[#131c2a] text-[#fff8f2] hover:bg-primary px-3 py-1.5 rounded-full transition-all cursor-pointer flex items-center gap-1"
+                          >
+                            <span className="material-symbols-outlined text-xs">how_to_reg</span>
+                            Check-In
+                          </button>
+                          <Link
+                            href={`/dashboard/members/${user.id}`}
+                            className="text-[#835500] hover:text-primary font-bold transition-all text-xs flex items-center gap-0.5"
+                          >
+                            Details
+                            <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   )
@@ -289,6 +310,84 @@ export default function MembersClient({ initialUsers, currentUserRole }: Members
           )}
         </div>
       </div>
+      {/* Check-In Modal */}
+      {checkingInUser && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex justify-center items-center z-50 p-4">
+          <div className="bg-[#fff8f2] p-8 rounded-2xl max-w-md w-full border border-[#d7c3ae]/30 shadow-2xl relative flex flex-col">
+            <button
+              onClick={() => setCheckingInUser(null)}
+              className="absolute right-4 top-4 text-on-surface-variant hover:text-[#ba1a1a] cursor-pointer focus:outline-none"
+            >
+              <span className="material-symbols-outlined text-2xl">close</span>
+            </button>
+
+            <h3 className="font-display text-xl font-bold text-[#201b13] mb-2 flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary">how_to_reg</span>
+              Verify & Check-In Member
+            </h3>
+            
+            <div className="my-6 space-y-4">
+              <div className="bg-white/50 border border-[#d7c3ae]/20 p-4 rounded-xl">
+                <p className="text-[10px] uppercase font-bold tracking-wider text-[#524534]">Member Details</p>
+                <p className="text-base font-extrabold text-[#201b13] mt-1">{checkingInUser.full_name || 'No Name'}</p>
+                <p className="text-xs text-[#524534] mt-0.5">{checkingInUser.email}</p>
+              </div>
+
+              {checkInResult && (
+                <div
+                  className={`p-4 rounded-xl border text-xs flex items-start gap-2.5 ${
+                    checkInResult.success
+                      ? 'bg-green-50 border-green-200 text-green-800'
+                      : 'bg-red-50 border-red-200 text-red-800'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-sm mt-0.5">
+                    {checkInResult.success ? 'check_circle' : 'cancel'}
+                  </span>
+                  <div>
+                    <p className="font-bold">{checkInResult.success ? 'Access Granted' : 'Access Denied'}</p>
+                    <p className="mt-1">
+                      {checkInResult.success
+                        ? `Check-in successful! Member has active plan: ${checkInResult.activePlan}`
+                        : `Check-in blocked: ${checkInResult.reason}`}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 justify-end pt-4 border-t border-[#d7c3ae]/15">
+              <button
+                type="button"
+                onClick={() => setCheckingInUser(null)}
+                className="px-5 py-2.5 rounded-full text-xs font-bold text-gray-500 hover:bg-gray-100 transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+              {!checkInResult && (
+                <button
+                  type="button"
+                  disabled={checkInLoading}
+                  onClick={async () => {
+                    setCheckInLoading(true)
+                    const res = await verifyAndCheckIn(checkingInUser.id)
+                    setCheckInResult({
+                      success: res.success,
+                      memberName: res.memberName || checkingInUser.full_name || 'Member',
+                      activePlan: res.activePlan,
+                      reason: res.reason,
+                    })
+                    setCheckInLoading(false)
+                  }}
+                  className="bg-[#131c2a] text-[#fff8f2] hover:bg-primary px-6 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {checkInLoading ? 'Checking...' : 'Confirm Check-In'}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

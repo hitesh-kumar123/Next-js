@@ -69,6 +69,8 @@ export default async function SettingsPage() {
         address={profile.address || ''}
         userEmail={user.email || ''}
         userRole={profile.role}
+        emailReminders={profile.email_reminders ?? true}
+        smsReminders={profile.sms_reminders ?? true}
       />
     </main>
   )

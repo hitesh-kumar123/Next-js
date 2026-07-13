@@ -8,6 +8,8 @@ export async function updateProfile(data: {
   fullName: string
   phone: string
   address: string
+  emailReminders: boolean
+  smsReminders: boolean
 }) {
   try {
     const supabase = await createClient()
@@ -25,6 +27,8 @@ export async function updateProfile(data: {
         full_name: data.fullName,
         phone: data.phone,
         address: data.address,
+        email_reminders: data.emailReminders,
+        sms_reminders: data.smsReminders,
       })
       .eq('id', user.id)
 

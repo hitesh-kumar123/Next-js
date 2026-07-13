@@ -1,6 +1,7 @@
 import React from 'react'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
+import { getTrainers } from './actions'
 import ScheduleClient from './ScheduleClient'
 
 export const dynamic = 'force-dynamic'
@@ -17,12 +18,29 @@ export default async function ClassSchedulePage() {
     redirect('/login')
   }
 
-  // Fetch profile to verify role
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single()
+  // Fetch all data in parallel to avoid query waterfalls
+  const [profileRes, classesRes, bookingsRes, trainersRes] = await Promise.all([
+    supabase
+      .from('users')
+      .select('role, full_name')
+      .eq('id', user.id)
+      .single(),
+    supabase
+      .from('classes')
+      .select('*, class_bookings(count)')
+      .order('start_time', { ascending: true }),
+    supabase
+      .from('class_bookings')
+      .select('class_id')
+      .eq('user_id', user.id),
+    getTrainers(),
+  ])
+
+  const profile = profileRes.data
+  const classesData = classesRes.data
+  const classesErr = classesRes.error
+  const bookingsData = bookingsRes.data
+  const trainers = trainersRes.trainers || []
 
   if (!profile) {
     return (
@@ -47,14 +65,6 @@ export default async function ClassSchedulePage() {
       </main>
     )
   }
-
-  // Fetch classes along with the bookings count using Supabase counts join
-  // Note: in Supabase JS, to count children without retrieving them, use:
-  // .select('*, class_bookings(count)')
-  const { data: classesData, error: classesErr } = await supabase
-    .from('classes')
-    .select('*, class_bookings(count)')
-    .order('start_time', { ascending: true })
 
   if (classesErr) {
     console.error('Failed to pull classes:', classesErr)
@@ -85,13 +95,9 @@ export default async function ClassSchedulePage() {
     }
   })
 
-  // Fetch the logged-in user's active bookings
-  const { data: bookingsData } = await supabase
-    .from('class_bookings')
-    .select('class_id')
-    .eq('user_id', user.id)
+  const bookedIds = (bookingsData || []).map((b: any) => b.class_id)
 
-  const bookedIds = (bookingsData || []).map((b) => b.class_id)
+  // Fetch trainers is already done in Promise.all above
 
   return (
     <main className="flex-1 p-10 relative overflow-hidden">
@@ -114,6 +120,8 @@ export default async function ClassSchedulePage() {
         initialClasses={classes}
         initialBookedIds={bookedIds}
         userRole={profile.role}
+        currentUserFullName={profile.full_name || ''}
+        trainers={trainers}
       />
     </main>
   )

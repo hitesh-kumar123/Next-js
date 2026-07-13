@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // @ts-ignore
+  allowedDevOrigins: ['192.168.1.10', 'localhost:3000'],
 };
 
 export default nextConfig;

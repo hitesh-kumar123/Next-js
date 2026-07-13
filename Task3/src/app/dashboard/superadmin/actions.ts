@@ -46,3 +46,41 @@ export async function toggleGymSuspended(gymOwnerId: string, currentVal: boolean
     return { error: err.message || 'An unexpected error occurred.' }
   }
 }
+
+// Fetch all platform users
+export async function getAllUsers() {
+  try {
+    await verifySuperAdmin()
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .order('created_at', { ascending: false })
+      
+    if (error) throw error
+    return { users: data || [] }
+  } catch (err: any) {
+    return { error: err.message || 'Failed to fetch platform users.' }
+  }
+}
+
+import { createAdminClient } from '@/utils/supabase/admin'
+
+// Impersonate / Log-in as user using magic link generation
+export async function impersonateUser(userEmail: string) {
+  try {
+    await verifySuperAdmin()
+    const adminSupabase = createAdminClient()
+    
+    const { data, error } = await adminSupabase.auth.admin.generateLink({
+      type: 'magiclink',
+      email: userEmail.trim().toLowerCase(),
+    })
+
+    if (error) throw error
+    
+    return { success: true, link: data.properties?.action_link || '' }
+  } catch (err: any) {
+    return { error: err.message || 'Failed to generate impersonation link.' }
+  }
+}

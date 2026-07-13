@@ -177,7 +177,7 @@ export async function getTodayCheckins() {
 
     const { data, error } = await supabase
       .from('checkins')
-      .select('id, checked_in_at, users(full_name, email)')
+      .select('id, checked_in_at, users!user_id(full_name, email)')
       .gte('checked_in_at', todayStart.toISOString())
       .order('checked_in_at', { ascending: false })
 
@@ -189,8 +189,8 @@ export async function getTodayCheckins() {
       fullName: (ci.users as any)?.full_name || 'Member',
       email: (ci.users as any)?.email || '',
     }))
-  } catch (err) {
-    console.error('Failed to pull checkins:', err)
+  } catch (err: any) {
+    console.error('Failed to pull checkins:', err?.message || err)
     return []
   }
 }

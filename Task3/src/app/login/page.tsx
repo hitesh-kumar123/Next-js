@@ -190,7 +190,7 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6B6459]/50 hover:text-[#F5A623] transition-colors p-1"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6B6459]/50 hover:text-[#F5A623] transition-colors p-1 z-10 cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-lg" aria-hidden="true">
                     {showPassword ? 'visibility_off' : 'visibility'}

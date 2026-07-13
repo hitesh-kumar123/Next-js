@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
 
-// Verify staff access
+// Verify staff access (includes Admin, Manager, and Trainer)
 async function verifyStaff() {
   const supabase = await createClient()
   const {
@@ -18,11 +18,27 @@ async function verifyStaff() {
     .eq('id', user.id)
     .single()
 
-  if (!profile || (profile.role !== 'Admin' && profile.role !== 'Manager')) {
+  if (!profile || (profile.role !== 'Admin' && profile.role !== 'Manager' && profile.role !== 'Trainer')) {
     throw new Error('Unauthorized. Staff privileges required.')
   }
 
   return user.id
+}
+
+// Fetch all staff users who can instruct classes
+export async function getTrainers() {
+  try {
+    const supabase = await createClient()
+    const { data: staff } = await supabase
+      .from('users')
+      .select('id, full_name, email')
+      .in('role', ['Trainer', 'Admin', 'Manager'])
+      .order('full_name', { ascending: true })
+
+    return { trainers: staff || [] }
+  } catch (err: any) {
+    return { error: err.message || 'Failed to fetch trainers.' }
+  }
 }
 
 export async function createClass(data: {

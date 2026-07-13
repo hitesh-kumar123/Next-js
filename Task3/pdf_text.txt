@@ -1,0 +1,214 @@
+--- PAGE 1 ---
+Advanced Next.js + GraphQL Full-Stack Platform
+— Task Description
+Project Overview
+Build a production-ready full-stack platform using Next.js and GraphQL with a strong focus on
+scalability, performance, API architecture, authentication, real-time features, and modern frontend
+development practices.
+The platform should demonstrate:
+• Advanced Next.js architecture
+• GraphQL API integration
+• Real-time functionality
+• Authentication and authorization
+• Complex frontend state management
+• Performance optimization
+• Modern UI/UX implementation
+The goal of this task is to evaluate advanced frontend and full-stack engineering skills, API design
+understanding, scalability thinking, and production-level architecture.
+Technical Requirements
+Core Stack
+Required technologies:
+• Next.js
+• TypeScript
+• GraphQL
+• Apollo Client or Relay
+• Tailwind CSS
+• Node.js
+Preferred:
+• Apollo Server / GraphQL Yoga / Hasura
+• PostgreSQL / MongoDB
+• Prisma ORM
+• Redis caching
+• Docker
+• WebSockets / Subscriptions
+1
+--- PAGE 2 ---
+Functional Requirements
+1. Marketing Website
+Build a modern marketing website with:
+• Homepage
+• Features page
+• Pricing page
+• Blog listing
+• Blog detail pages
+• Contact page
+Requirements:
+• SEO optimized
+• Fully responsive
+• Optimized images
+• Smooth animations
+• Fast loading performance
+Use static generation wherever possible.
+2. Authentication & Authorization
+Implement:
+• Login
+• Signup
+• Forgot password
+• Protected routes
+• Session handling
+• JWT or secure cookie authentication
+Optional:
+• Google OAuth
+• GitHub OAuth
+Role-based access:
+• Admin
+• Editor
+• Viewer
+2
+--- PAGE 3 ---
+3. GraphQL API Architecture
+Build a scalable GraphQL API with:
+• Queries
+• Mutations
+• Subscriptions
+• Schema organization
+• Resolver structure
+• Authentication middleware
+• Pagination
+• Filtering
+• Sorting
+Requirements:
+• Proper error handling
+• Input validation
+• Optimized query performance
+• N+1 query prevention
+4. Dashboard System
+Create an authenticated dashboard containing:
+• Analytics overview
+• Charts and reports
+• User management
+• Team management
+• Activity logs
+• Settings pages
+• Notification system
+Requirements:
+• Responsive design
+• Optimistic UI updates
+• Skeleton loaders
+• Pagination
+• Search and filtering
+5. Real-Time Features
+Implement at least one real-time feature using GraphQL subscriptions or WebSockets.
+Examples:
+• Live notifications
+3
+--- PAGE 4 ---
+• Live analytics
+• Team activity feed
+• Chat system
+• Presence indicators
+6. State Management
+Implement scalable frontend state management.
+Possible approaches:
+• Apollo cache
+• Zustand
+• Redux Toolkit
+• React Context
+Requirements:
+• API caching
+• Optimistic updates
+• Error recovery
+• Loading states
+7. AI Integration
+Integrate an AI-powered feature.
+Examples:
+• AI assistant/chat
+• AI content generation
+• AI summarization tool
+• AI support assistant
+Requirements:
+• Streaming responses
+• Markdown rendering
+• Proper loading states
+• Error handling
+8. Advanced UI & Animation
+Implement modern UI interactions including:
+• Smooth page transitions
+4
+--- PAGE 5 ---
+• Scroll animations
+• Interactive dashboard widgets
+• Hover effects
+• Loading animations
+• Modal transitions
+Preferred libraries:
+• Framer Motion
+• GSAP
+Performance Requirements
+Target:
+• Lighthouse score above 90
+• Optimized API calls
+• Query caching
+• Code splitting
+• Lazy loading
+• Image optimization
+• Efficient bundle size
+Code Quality Requirements
+Codebase should include:
+• Clean architecture
+• Reusable components
+• Proper TypeScript types
+• GraphQL schema organization
+• Modular folder structure
+• API abstraction layer
+• Error boundaries
+• Environment variable management
+• Consistent naming conventions
+Database Requirements
+Database should support:
+• Users
+• Organizations/teams
+• Roles and permissions
+• Activity logs
+5
+--- PAGE 6 ---
+• Notifications
+• Analytics data
+• AI history/logs
+Optional:
+• Multi-tenant architecture
+• Audit logs
+• Soft delete functionality
+Deliverables
+Please provide: 1. Complete source code 2. README documentation 3. Environment setup instructions
+4. GraphQL schema documentation 5. Deployment instructions 6. Live deployed URL 7. Git repository
+access
+Evaluation Criteria
+The submission will be evaluated based on:
+• Next.js architecture understanding
+• GraphQL architecture quality
+• API design quality
+• Performance optimization
+• Scalability
+• Code quality
+• UI/UX quality
+• Responsiveness
+• State management implementation
+• Real-time feature implementation
+• Overall developer experience
+Bonus Points
+Additional consideration for:
+• Docker setup
+• CI/CD pipeline
+• Unit/integration testing
+• E2E testing
+• Internationalization (i18n)
+• Dark/light theme
+• PWA support
+• Redis caching
+• Rate limiting
+6
+--- PAGE 7 ---
+• Advanced security practices
+• Monitoring/logging setup
+7
