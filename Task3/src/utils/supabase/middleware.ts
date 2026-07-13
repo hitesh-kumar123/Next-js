@@ -3,7 +3,8 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
   let path = request.nextUrl.pathname
-  let host = request.headers.get('host') || ''
+  const hostHeader = request.headers.get('host') || ''
+  let host = hostHeader.split(':')[0].toLowerCase().trim()
   
   // Safety check for environment variables in production
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -52,7 +53,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Parse Subdomain
-  host = request.headers.get('host') || ''
+  // host is already normalized and port-stripped at the top
   const isIpAddress = /^[0-9.]+$/.test(host.split(':')[0])
   const parts = host.split('.')
   let subdomain: string | null = null
