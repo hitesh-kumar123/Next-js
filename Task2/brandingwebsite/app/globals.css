@@ -1,0 +1,52 @@
+/* app/globals.css */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --border: 240 5.9% 90%;
+    --primary: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+
+    /* Brand accent (teal) — the single source of truth for the color used
+       across nav, buttons, status indicators, and the node-map motif.
+       Update this one value instead of hunting for hardcoded hex. */
+    --accent: 170 77% 53%;
+    --accent-foreground: 220 20% 5%;
+
+    /* Type roles: display face for headings/wordmark, mono for labels,
+       status pills, and code. Loaded via the Google Fonts @import above —
+       swap for next/font if you want self-hosted, zero-layout-shift fonts. */
+    --font-display: "Space Grotesk", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --border: 240 3.7% 15.9%;
+    --primary: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+
+    /* Same accent both modes — it's a fixed brand color, not a UI surface,
+       so it doesn't need a dark-mode override. */
+    --accent: 170 77% 53%;
+    --accent-foreground: 220 20% 5%;
+  }
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
