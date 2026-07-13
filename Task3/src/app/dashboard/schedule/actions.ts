@@ -106,16 +106,22 @@ export async function bookClass(classId: string) {
       return { error: 'Unauthenticated.' }
     }
 
-    // 1. Verify waiver signature
-    const { data: waiverSign } = await supabase
-      .from('waiver_agreements')
-      .select('id')
-      .eq('user_id', user.id)
-      .limit(1)
-      .maybeSingle()
+    // 1. Verify waiver signature only if the gym actually has waivers set up
+    const { count: waiverCount } = await supabase
+      .from('waivers')
+      .select('*', { count: 'exact', head: true })
 
-    if (!waiverSign) {
-      return { error: 'You must review and sign the legal waiver before booking classes.' }
+    if (waiverCount && waiverCount > 0) {
+      const { data: waiverSign } = await supabase
+        .from('waiver_agreements')
+        .select('id')
+        .eq('user_id', user.id)
+        .limit(1)
+        .maybeSingle()
+
+      if (!waiverSign) {
+        return { error: 'You must review and sign the legal waiver before booking classes.' }
+      }
     }
 
     // 2. Verify active membership eligibility

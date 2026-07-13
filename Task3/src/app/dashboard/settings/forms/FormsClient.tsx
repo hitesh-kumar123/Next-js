@@ -137,7 +137,16 @@ export default function FormsClient({
 
   const buildPublicUrl = (slug: string) => {
     if (typeof window === 'undefined') return ''
-    const hostParts = window.location.host.split('.')
+    const host = window.location.host // e.g. "localhost:3000" or "192.168.1.10:3000"
+    const isIpAddress = /^[0-9.]+$/.test(host.split(':')[0])
+    const sub = gymSubdomain || 'yourname'
+
+    if (isIpAddress) {
+      // For local IP network testing: use the direct /subdomains/[subdomain]/join/[slug] path route
+      return `${window.location.protocol}//${host}/subdomains/${sub}/join/${slug}`
+    }
+
+    const hostParts = host.split('.')
     let mainDomain = 'thinkauric.com'
 
     // If running in localhost
@@ -145,7 +154,6 @@ export default function FormsClient({
       mainDomain = 'localhost:3000'
     }
 
-    const sub = gymSubdomain || 'yourname'
     return `${window.location.protocol}//${sub}.${mainDomain}/join/${slug}`
   }
 
