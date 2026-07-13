@@ -43,13 +43,24 @@ export async function updateSession(request: NextRequest) {
   let subdomain: string | null = null
 
   if (!isIpAddress && parts.length > 1) {
-    const lastPart = parts[parts.length - 1]
-    if (lastPart.startsWith('localhost:3000') && parts.length === 2) {
-      const possible = parts[0].toLowerCase()
-      if (possible !== 'www') subdomain = possible
-    } else if (parts.length > 2) {
-      const possible = parts[0].toLowerCase()
-      if (possible !== 'www' && possible !== 'api') subdomain = possible
+    if (host.includes('localhost')) {
+      // Local dev e.g. goldgym.localhost:3000 (parts.length === 2)
+      if (parts.length === 2) {
+        const possible = parts[0].toLowerCase()
+        if (possible !== 'www') subdomain = possible
+      }
+    } else if (host.endsWith('.vercel.app')) {
+      // Vercel deployment URL e.g. goldgym.myproject.vercel.app (parts.length === 4)
+      if (parts.length === 4) {
+        const possible = parts[0].toLowerCase()
+        if (possible !== 'www' && possible !== 'api') subdomain = possible
+      }
+    } else {
+      // Custom production domain e.g. goldgym.thinkauric.com (parts.length === 3)
+      if (parts.length === 3) {
+        const possible = parts[0].toLowerCase()
+        if (possible !== 'www' && possible !== 'api') subdomain = possible
+      }
     }
   }
 
