@@ -18,6 +18,7 @@ interface CheckInClientProps {
 export default function CheckInClient({ initialCheckins }: CheckInClientProps) {
   const [memberInput, setMemberInput] = useState('')
   const [cameraActive, setCameraActive] = useState(false)
+  const [cameraError, setCameraError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   // Last check-in result state
@@ -65,7 +66,12 @@ export default function CheckInClient({ initialCheckins }: CheckInClientProps) {
           }
         )
         .catch((err) => {
-          console.error('Webcam QR scanner failed to start:', err)
+          console.warn('Webcam QR scanner failed to start:', err)
+          if (typeof window !== 'undefined' && !window.isSecureContext) {
+            setCameraError('Webcam requires HTTPS or localhost. For mobile testing, use localhost:3000 on the host PC or expose your local server using an HTTPS tunnel (e.g. ngrok).')
+          } else {
+            setCameraError('Failed to access webcam. Please verify camera permissions in browser settings.')
+          }
           setCameraActive(false)
         })
 
@@ -223,6 +229,11 @@ export default function CheckInClient({ initialCheckins }: CheckInClientProps) {
           <div className="w-full max-w-[280px] aspect-square bg-[#3e4757]/30 border border-[#bec7da]/20 rounded-xl overflow-hidden relative flex items-center justify-center mb-6">
             {cameraActive ? (
               <div id="qr-reader-viewport" className="w-full h-full object-cover" />
+            ) : cameraError ? (
+              <div className="text-center p-4 space-y-2">
+                <span className="material-symbols-outlined text-3xl text-red-400">gpp_maybe</span>
+                <p className="text-[10px] text-red-300 font-bold leading-normal px-2">{cameraError}</p>
+              </div>
             ) : (
               <div className="text-center p-6 space-y-3">
                 <span className="material-symbols-outlined text-4xl text-[#bec7da]/30">videocam_off</span>
@@ -236,7 +247,10 @@ export default function CheckInClient({ initialCheckins }: CheckInClientProps) {
           </div>
 
           <button
-            onClick={() => setCameraActive(!cameraActive)}
+            onClick={() => {
+              setCameraError(null)
+              setCameraActive(!cameraActive)
+            }}
             className={`w-full py-3 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
               cameraActive
                 ? 'bg-red-600 hover:bg-red-700 text-white shadow-md'

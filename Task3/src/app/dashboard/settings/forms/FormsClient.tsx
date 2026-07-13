@@ -172,8 +172,32 @@ export default function FormsClient({
             </div>
             <button
               onClick={() => {
-                navigator.clipboard.writeText(qrUrl)
-                alert('Signup URL copied!')
+                const text = qrUrl
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                  navigator.clipboard.writeText(text)
+                    .then(() => alert('Signup URL copied!'))
+                    .catch(() => {
+                      const textArea = document.createElement('textarea')
+                      textArea.value = text
+                      textArea.style.position = 'fixed'
+                      document.body.appendChild(textArea)
+                      textArea.focus()
+                      textArea.select()
+                      document.execCommand('copy')
+                      document.body.removeChild(textArea)
+                      alert('Signup URL copied!')
+                    })
+                } else {
+                  const textArea = document.createElement('textarea')
+                  textArea.value = text
+                  textArea.style.position = 'fixed'
+                  document.body.appendChild(textArea)
+                  textArea.focus()
+                  textArea.select()
+                  document.execCommand('copy')
+                  document.body.removeChild(textArea)
+                  alert('Signup URL copied!')
+                }
               }}
               className="w-full bg-[#131c2a] text-[#fff8f2] hover:bg-primary py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer"
             >

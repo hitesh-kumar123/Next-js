@@ -55,3 +55,16 @@ DROP POLICY IF EXISTS "Allow public to insert agreements during checkout" ON pub
 ALTER TABLE public.users 
 ADD COLUMN IF NOT EXISTS email_reminders BOOLEAN DEFAULT TRUE,
 ADD COLUMN IF NOT EXISTS sms_reminders BOOLEAN DEFAULT TRUE;
+
+-- 5. UNIQUE INVITE CONSTRAINT: Add unique constraint on email to invites table to support upserts.
+ALTER TABLE public.invites DROP CONSTRAINT IF EXISTS invites_email_key;
+ALTER TABLE public.invites ADD CONSTRAINT invites_email_key UNIQUE (email);
+
+-- 6. TRAINER SCHEDULING RLS: Update classes table RLS to allow Trainers to insert and modify classes.
+DROP POLICY IF EXISTS "Allow staff to insert classes" ON public.classes;
+CREATE POLICY "Allow staff to insert classes" ON public.classes
+  FOR INSERT TO authenticated WITH CHECK (public.get_user_role(auth.uid()) IN ('Admin', 'Manager', 'Trainer'));
+
+DROP POLICY IF EXISTS "Allow staff to modify classes" ON public.classes;
+CREATE POLICY "Allow staff to modify classes" ON public.classes
+  FOR ALL TO authenticated USING (public.get_user_role(auth.uid()) IN ('Admin', 'Manager', 'Trainer'));

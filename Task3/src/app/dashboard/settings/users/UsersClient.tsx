@@ -118,9 +118,36 @@ export default function UsersClient({
     }
   }
 
+  const fallbackCopy = (text: string) => {
+    try {
+      const textArea = document.createElement('textarea')
+      textArea.value = text
+      textArea.style.top = '0'
+      textArea.style.left = '0'
+      textArea.style.position = 'fixed'
+      document.body.appendChild(textArea)
+      textArea.focus()
+      textArea.select()
+      const successful = document.execCommand('copy')
+      document.body.removeChild(textArea)
+      if (successful) {
+        alert('Invite link copied to clipboard!')
+      } else {
+        alert('Please copy it manually: ' + text)
+      }
+    } catch (err) {
+      alert('Please copy it manually: ' + text)
+    }
+  }
+
   const handleCopyLink = (link: string) => {
-    navigator.clipboard.writeText(link)
-    alert('Invite link copied to clipboard!')
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link)
+        .then(() => alert('Invite link copied to clipboard!'))
+        .catch(() => fallbackCopy(link))
+    } else {
+      fallbackCopy(link)
+    }
   }
 
   return (
