@@ -2,13 +2,28 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
+  let path = request.nextUrl.pathname
+  let host = request.headers.get('host') || ''
+  
+  // Safety check for environment variables in production
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.error("Middleware Error: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY is missing!")
+    return new NextResponse(
+      JSON.stringify({
+        error: "Missing Supabase Environment Variables",
+        message: "Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your Vercel Project Settings > Environment Variables, then redeploy."
+      }),
+      { status: 500, headers: { 'content-type': 'application/json' } }
+    )
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   })
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
@@ -27,7 +42,7 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  const path = request.nextUrl.pathname
+  path = request.nextUrl.pathname
   const isAsset = path.startsWith('/_next') ||
                   path.startsWith('/static') ||
                   path.includes('.')
@@ -37,7 +52,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Parse Subdomain
-  const host = request.headers.get('host') || ''
+  host = request.headers.get('host') || ''
   const isIpAddress = /^[0-9.]+$/.test(host.split(':')[0])
   const parts = host.split('.')
   let subdomain: string | null = null
@@ -63,6 +78,8 @@ export async function updateSession(request: NextRequest) {
       }
     }
   }
+
+  console.log("Middleware Routing - Host:", host, "Path:", path, "Subdomain:", subdomain)
 
   // If subdomain is active, verify owner status
   if (subdomain) {
